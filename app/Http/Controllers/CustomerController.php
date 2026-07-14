@@ -8,25 +8,40 @@ use Illuminate\Http\Request;
 class CustomerController extends Controller
 {
     // Get all customers for logged-in user (with pagination)
-    public function index()
-    {
-        try {
-            $customers = Customer::where('user_id', auth()->id())
-                                ->paginate(10);
-            
-            return response()->json([
-                'status' => true,
-                'message' => 'Customers retrieved successfully',
-                'data' => $customers
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Failed to retrieve customers',
-                'errors' => ['error' => [$e->getMessage()]]
-            ], 500);
+public function index(Request $request)
+{
+    try {
+        $search = $request->query('search', '');
+        $perPage = $request->query('per_page', 10);
+
+        $query = Customer::where('user_id', auth()->id());
+
+        // Search by name, email, or phone (partial match)
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhere('email', 'like', "%$search%")
+                  ->orWhere('phone', 'like', "%$search%");
+            });
         }
+
+        // Paginate results
+        $customers = $query->paginate($perPage);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Customers retrieved successfully',
+            'data' => $customers
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Error retrieving customers',
+            'errors' => ['error' => [$e->getMessage()]]
+        ], 500);
     }
+}
 
     // Create a new customer
     public function store(Request $request)

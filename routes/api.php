@@ -7,6 +7,8 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PropertyPhotoController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,21 +26,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
 
     // Property Routes (Protected - User must be logged in)
-    Route::middleware('auth:sanctum')->group(function () {
-    // Get all properties of logged-in user
-    Route::get('/properties', [PropertyController::class, 'index']);
+           Route::middleware('auth:sanctum')->group(function () {
+     // Property Photo Upload (Protected)
+           Route::post('/properties/{id}/photo', [PropertyPhotoController::class, 'upload']);
+           
+     // Get all properties of logged-in user
+           Route::get('/properties', [PropertyController::class, 'index']);
     
     // Create a new property
-    Route::post('/properties', [PropertyController::class, 'store']);
+            Route::post('/properties', [PropertyController::class, 'store']);
     
     // Get single property
-    Route::get('/properties/{id}', [PropertyController::class, 'show']);
+            Route::get('/properties/{id}', [PropertyController::class, 'show']);
     
     // Update property
-    Route::put('/properties/{id}', [PropertyController::class, 'update']);
+            Route::put('/properties/{id}', [PropertyController::class, 'update']);
     
     // Delete property
-    Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
+            Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
 });
 
     // Property CRUD
@@ -70,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Profile Routes (Protected - User must be logged in)
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'dashboard']);
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
 });

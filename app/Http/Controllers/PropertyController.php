@@ -8,25 +8,38 @@ use Illuminate\Http\Request;
 class PropertyController extends Controller
 {
     // Get all properties for logged-in user (with pagination)
-    public function index()
-    {
-        try {
-            $properties = Property::where('user_id', auth()->id())
-                                  ->paginate(10); // 10 properties per page
-            
-            return response()->json([
-                'status' => true,
-                'message' => 'Properties retrieved successfully',
-                'data' => $properties
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Failed to retrieve properties',
-                'errors' => ['error' => [$e->getMessage()]]
-            ], 500);
+   public function index(Request $request)
+{
+    try {
+        $search = $request->query('search', '');
+        $perPage = $request->query('per_page', 10);
+
+        $query = Property::where('user_id', auth()->id());
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(city) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
         }
+
+        $properties = $query->paginate($perPage);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Properties retrieved successfully',
+            'data' => $properties
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Error retrieving properties',
+            'errors' => ['error' => [$e->getMessage()]]
+        ], 500);
     }
+}
+
 
     // Create a new property
     public function store(Request $request)

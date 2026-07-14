@@ -8,21 +8,40 @@ use Illuminate\Http\Request;
 class LeadController extends Controller
 {
     // Get all leads for logged-in user (with pagination)
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $leads = Lead::where('user_id', auth()->id())
-                        ->paginate(10);
-            
+            $search = $request->query('search', '');
+            $status = $request->query('status', '');
+            $perPage = $request->query('per_page', 10);
+
+            $query = Lead::where('user_id', auth()->id());
+
+            // Filter by status (exact match)
+            if ($status) {
+                $query->where('status', $status);
+            }
+
+            // Search by note (partial match)
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->whereRaw('LOWER(note) LIKE ?', ['%' . strtolower($search) . '%']);
+                });
+            }
+
+            // Paginate results
+            $leads = $query->paginate($perPage);
+
             return response()->json([
                 'status' => true,
                 'message' => 'Leads retrieved successfully',
                 'data' => $leads
             ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Failed to retrieve leads',
+                'message' => 'Error retrieving leads',
                 'errors' => ['error' => [$e->getMessage()]]
             ], 500);
         }
@@ -33,17 +52,20 @@ class LeadController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string|max:100',
-                'email' => 'required|email|max:100',
-                'phone' => 'required|string|max:20',
-                'city' => 'required|string|max:100',
-                'status' => 'required|string|max:50',
-                'notes' => 'nullable|string'
+                'customer_id' => 'required|integer',
+                'property_id' => 'required|integer',
+                'status' => 'required|string|in:New,Contacted,Visited,Closed',
+                'note' => 'nullable|string',
+                'follow_up_date' => 'nullable|date'
             ]);
 
             $lead = Lead::create([
                 'user_id' => auth()->id(),
-                ...$validated
+                'customer_id' => $validated['customer_id'],
+                'property_id' => $validated['property_id'],
+                'status' => $validated['status'],
+                'note' => $validated['note'] ?? null,
+                'follow_up_date' => $validated['follow_up_date'] ?? null
             ]);
 
             return response()->json([
@@ -51,6 +73,7 @@ class LeadController extends Controller
                 'message' => 'Lead added successfully',
                 'data' => $lead
             ], 201);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => false,
@@ -101,12 +124,9 @@ class LeadController extends Controller
                         ->findOrFail($id);
 
             $validated = $request->validate([
-                'name' => 'sometimes|string|max:100',
-                'email' => 'sometimes|email|max:100',
-                'phone' => 'sometimes|string|max:20',
-                'city' => 'sometimes|string|max:100',
-                'status' => 'sometimes|string|max:50',
-                'notes' => 'nullable|string'
+                'status' => 'sometimes|string|in:New,Contacted,Visited,Closed',
+                'note' => 'nullable|string',
+                'follow_up_date' => 'nullable|date'
             ]);
 
             $lead->update($validated);
@@ -148,8 +168,7 @@ class LeadController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Lead deleted successfully',
-                'data' => null
+                'message' => 'Lead deleted successfully'
             ], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
