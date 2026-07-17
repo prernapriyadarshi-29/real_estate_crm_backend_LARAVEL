@@ -8,44 +8,49 @@ use Illuminate\Http\Request;
 class LeadController extends Controller
 {
     // Get all leads for logged-in user (with pagination)
-    public function index(Request $request)
-    {
-        try {
-            $search = $request->query('search', '');
-            $status = $request->query('status', '');
-            $perPage = $request->query('per_page', 10);
+   public function index(Request $request)
+{
+    try {
+        $search = $request->query('search', '');
+        $status = $request->query('status', '');
+        $perPage = $request->query('per_page', 10);
 
-            $query = Lead::where('user_id', auth()->id());
+        $query = Lead::with('customer', 'property')  // ← ADD THIS
+            ->where('user_id', auth()->id());
 
-            // Filter by status (exact match)
-            if ($status) {
-                $query->where('status', $status);
-            }
-
-            // Search by note (partial match)
-            if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->whereRaw('LOWER(note) LIKE ?', ['%' . strtolower($search) . '%']);
-                });
-            }
-
-            // Paginate results
-            $leads = $query->paginate($perPage);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Leads retrieved successfully',
-                'data' => $leads
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Error retrieving leads',
-                'errors' => ['error' => [$e->getMessage()]]
-            ], 500);
+        // Filter by status (exact match)
+        if ($status) {
+            $query->where('status', $status);
         }
+
+       // Search by customer name, phone, and note
+if ($search) {
+    $query->where(function($q) use ($search) {
+        $q->whereHas('customer', function($customerQuery) use ($search) {
+            $customerQuery->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
+                          ->orWhereRaw('LOWER(phone) LIKE ?', ['%' . strtolower($search) . '%']);
+        })
+        ->orWhereRaw('LOWER(note) LIKE ?', ['%' . strtolower($search) . '%']);
+    });
+}
+
+        // Paginate results
+        $leads = $query->paginate($perPage);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Leads retrieved successfully',
+            'data' => $leads
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Error retrieving leads',
+            'errors' => ['error' => [$e->getMessage()]]
+        ], 500);
     }
+}
 
     // Create a new lead
     public function store(Request $request)

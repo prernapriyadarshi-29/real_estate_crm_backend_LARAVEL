@@ -25,6 +25,14 @@ class PropertyController extends Controller
 
         $properties = $query->paginate($perPage);
 
+        // Return JUST the filename, nothing else
+$properties->getCollection()->transform(function ($property) {
+    if ($property->photo) {
+        // Build full URL
+        $property->photo = url('storage/properties/' . $property->photo);
+    }
+    return $property;
+});
         return response()->json([
             'status' => true,
             'message' => 'Properties retrieved successfully',
@@ -51,7 +59,7 @@ class PropertyController extends Controller
                 'city' => 'required|string|max:100',
                 'address' => 'nullable|string',
                 'bedrooms' => 'required|integer|min:0',
-                'type' => 'required|string|max:50',
+                'property_type' => 'required|string|max:50',
                 'photo' => 'nullable|string',
                 'status' => 'required|integer|in:0,1'
             ]);
@@ -60,6 +68,9 @@ class PropertyController extends Controller
                 'user_id' => auth()->id(),
                 ...$validated
             ]);
+            $property->photo_url = $property->photo
+    ? asset('storage/' . $property->photo)
+    : null;
 
             return response()->json([
                 'status' => true,
@@ -87,6 +98,9 @@ class PropertyController extends Controller
         try {
             $property = Property::where('user_id', auth()->id())
                                 ->findOrFail($id);
+                                $property->photo_url = $property->photo
+    ? asset('storage/' . $property->photo)
+    : null;
 
             return response()->json([
                 'status' => true,
@@ -121,12 +135,17 @@ class PropertyController extends Controller
                 'city' => 'sometimes|string|max:100',
                 'address' => 'nullable|string',
                 'bedrooms' => 'sometimes|integer|min:0',
-                'type' => 'sometimes|string|max:50',
+                'property_type' => 'sometimes|string|max:50',
                 'photo' => 'nullable|string',
                 'status' => 'sometimes|integer|in:0,1'
             ]);
 
             $property->update($validated);
+            $property->refresh();
+
+$property->photo_url = $property->photo
+    ? asset('storage/' . $property->photo)
+    : null;
 
             return response()->json([
                 'status' => true,
