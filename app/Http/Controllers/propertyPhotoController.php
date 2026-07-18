@@ -29,7 +29,7 @@ class PropertyPhotoController extends Controller
                 return response()->json([
                     'status' => true,
                     'message' => 'Photo uploaded successfully',
-                    'photo_url' => url('storage/' . $filename)
+                    'photo_url' => $filename
                 ], 200);
             }
 

@@ -27,10 +27,6 @@ class PropertyController extends Controller
 
         // Return JUST the filename, nothing else
 $properties->getCollection()->transform(function ($property) {
-    if ($property->photo) {
-        // Build full URL
-        $property->photo = url('storage/properties/' . $property->photo);
-    }
     return $property;
 });
         return response()->json([
