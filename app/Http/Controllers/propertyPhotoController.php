@@ -10,9 +10,13 @@ class PropertyPhotoController extends Controller
     public function upload(Request $request, $propertyId)
     {
         try {
-            $property = Property::where('id', $propertyId)
-                ->where('user_id', auth()->id())
-                ->findOrFail($propertyId);
+            $property = Property::findOrFail($propertyId);
+            if ($property->user_id != auth()->id()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorized'
+                    ], 403);
+                    }
 
             if ($request->hasFile('photo')) {
                 $file = $request->file('photo');
