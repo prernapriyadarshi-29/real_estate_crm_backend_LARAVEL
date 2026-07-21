@@ -39,8 +39,8 @@
             </li>
 
             <li class="nav-item mb-2">
-                <a href="/admin/users" class="nav-link text-white">
-                    <i class="bi bi-person"></i> Users
+                <a href="/admin/customers" class="nav-link text-white">
+                    <i class="bi bi-person"></i> Customers
                 </a>
             </li>
 

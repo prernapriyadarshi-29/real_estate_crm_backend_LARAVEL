@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Users')
+@section('title', 'Customers')
 
 @section('content')
 
-<h2 class="mb-4">All Users</h2>
+<h2 class="mb-4">All Customers</h2>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -12,7 +12,6 @@
             <th>S.No</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Role</th>
             <th>Phone</th>
             <th>Status</th>
             <th>Action</th>
@@ -20,16 +19,15 @@
     </thead>
 
     <tbody>
-        @foreach($users as $index => $user)
+        @foreach($customers as $index => $customer)
         <tr>
             <td>{{ $index + 1 }}</td>
-            <td>{{ $user->name }}</td>
-            <td>{{ $user->email }}</td>
-            <td>{{ ucfirst($user->role) }}</td>
-            <td>{{ $user->phone ?? 'N/A' }}</td>
+            <td>{{ $customer->name }}</td>
+            <td>{{ $customer->email }}</td>
+            <td>{{ $customer->phone ?? 'N/A' }}</td>
 
             <td>
-                @if($user->is_active)
+                @if($customer->is_active)
                     <span class="badge bg-success">Active</span>
                 @else
                     <span class="badge bg-danger">Blocked</span>
@@ -37,7 +35,7 @@
             </td>
 
             <td>
-                <a href="/admin/users/{{ $user->id }}" class="btn btn-primary btn-sm">
+                <a href="/admin/customers/{{ $customer->id }}" class="btn btn-primary btn-sm">
                     View
                 </a>
             </td>
