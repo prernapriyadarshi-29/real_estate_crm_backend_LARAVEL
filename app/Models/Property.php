@@ -20,6 +20,7 @@ class Property extends Model
         'bedrooms',
         'status',
         'photo',
+         'approval_status'  // ADD THIS LINE
     ];
 
     /**
