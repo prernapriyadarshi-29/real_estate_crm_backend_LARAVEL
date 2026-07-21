@@ -16,6 +16,8 @@
 
             <th>Title</th>
 
+            <th>Agent</th>
+
             <th>City</th>
 
             <th>Price</th>
@@ -39,6 +41,8 @@
             <td>{{ $loop->iteration }}</td>
 
             <td>{{ $property->title }}</td>
+
+            <td>{{ $property->user->name ?? 'Unknown' }}</td>
 
             <td>{{ $property->city }}</td>
 

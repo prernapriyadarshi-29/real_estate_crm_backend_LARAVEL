@@ -33,19 +33,19 @@
             </li>
 
             <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-white">
+                <a href="/admin/agents" class="nav-link text-white">
                     <i class="bi bi-people"></i> Agents
                 </a>
             </li>
 
             <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-white">
+                <a href="/admin/users" class="nav-link text-white">
                     <i class="bi bi-person"></i> Users
                 </a>
             </li>
 
             <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-white">
+                <a href="/admin/bookings" class="nav-link text-white">
                     <i class="bi bi-journal-check"></i> Bookings
                 </a>
             </li>

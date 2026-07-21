@@ -9,7 +9,7 @@ class PropertyController extends Controller
 {
     public function index()
     {
-        $properties = Property::latest()->get();
+        $properties = Property::with('user')->latest()->get();
         return view('Admin.properties.index', compact('properties'));
     }
 
