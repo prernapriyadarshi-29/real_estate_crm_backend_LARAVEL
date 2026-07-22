@@ -29,8 +29,8 @@
     <div class="col-md-3 mb-4">
         <div class="card shadow border-0">
             <div class="card-body">
-                <h6>Total Users</h6>
-                <h2>{{ $totalUsers }}</h2>
+                <h6>Total Customers</h6>
+                <h2>{{ $totalCustomers }}</h2>
             </div>
         </div>
     </div>
