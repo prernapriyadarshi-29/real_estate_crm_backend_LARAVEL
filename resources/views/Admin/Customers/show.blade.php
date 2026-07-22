@@ -1,61 +1,48 @@
 @extends('layouts.admin')
 
-@section('title', 'Customer Details')
-
 @section('content')
 
 <h2 class="mb-4">Customer Details</h2>
 
-<div class="card">
-    <div class="card-body">
-
-        <p><strong>Name:</strong> {{ $customer->name }}</p>
-
-        <p><strong>Email:</strong> {{ $customer->email }}</p>
-
-        <p><strong>Phone:</strong> {{ $customer->phone ?? 'N/A' }}</p>
-
-        <p><strong>Role:</strong> {{ ucfirst($customer->role) }}</p>
-
-        <p>
-            <strong>Status:</strong>
-
+<table class="table table-bordered">
+    <tr>
+        <th>Name</th>
+        <td>{{ $customer->name }}</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>{{ $customer->email }}</td>
+    </tr>
+    <tr>
+        <th>Phone</th>
+        <td>{{ $customer->phone ?? 'N/A' }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>
             @if($customer->is_active)
                 <span class="badge bg-success">Active</span>
             @else
                 <span class="badge bg-danger">Blocked</span>
             @endif
-        </p>
+        </td>
+    </tr>
+</table>
 
-        <hr>
-
-        @if($customer->is_active)
-
-            <form action="/admin/customers/{{ $customer->id }}/block" method="POST">
-                @csrf
-                <button class="btn btn-danger">
-                    Block Customer
-                </button>
-            </form>
-
-        @else
-
-            <form action="/admin/customers/{{ $customer->id }}/activate" method="POST">
-                @csrf
-                <button class="btn btn-success">
-                    Activate Customer
-                </button>
-            </form>
-
-        @endif
-
-        <br>
-
-        <a href="/admin/customers" class="btn btn-secondary">
-            Back
-        </a>
-
-    </div>
+<div class="mb-3 mt-4">
+    @if($customer->is_active)
+    <form method="POST" action="/admin/customers/{{ $customer->id }}/block" style="display:inline;">
+        @csrf
+        <button class="btn btn-danger btn-lg">Block Customer</button>
+    </form>
+    @else
+    <form method="POST" action="/admin/customers/{{ $customer->id }}/activate" style="display:inline;">
+        @csrf
+        <button class="btn btn-success btn-lg">Activate Customer</button>
+    </form>
+    @endif
 </div>
+
+<a href="/admin/customers" class="btn btn-secondary">Back to Customers</a>
 
 @endsection

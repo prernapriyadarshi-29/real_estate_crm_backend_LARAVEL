@@ -21,17 +21,35 @@ class AgentController extends Controller
         return view('Admin.agents.show', compact('agent'));
     }
 
-    public function approve($id)
-    {
-        $agent = User::where('role', 'agent')->findOrFail($id);
-        $agent->update(['is_active' => 1]);
-        return back()->with('success', 'Agent activated');
-    }
+   public function approve($id)
+{
+    $agent = User::where('role', 'agent')->findOrFail($id);
+    $agent->approval_status = 'approved';
+    $agent->save();
+    return back()->with('success', 'Agent approved');
+}
 
-    public function reject($id)
-    {
-        $agent = User::where('role', 'agent')->findOrFail($id);
-        $agent->update(['is_active' => 0]);
-        return back()->with('success', 'Agent deactivated');
-    }
+public function reject($id)
+{
+    $agent = User::where('role', 'agent')->findOrFail($id);
+    $agent->approval_status = 'rejected';
+    $agent->save();
+    return back()->with('success', 'Agent rejected');
+}
+
+public function activate($id)
+{
+    $agent = User::where('role', 'agent')->findOrFail($id);
+    $agent->is_active = 1;
+    $agent->save();
+    return back()->with('success', 'Agent can login now');
+}
+
+public function deactivate($id)
+{
+    $agent = User::where('role', 'agent')->findOrFail($id);
+    $agent->is_active = 0;
+    $agent->save();
+    return back()->with('success', 'Agent login disabled');
+}
 }
