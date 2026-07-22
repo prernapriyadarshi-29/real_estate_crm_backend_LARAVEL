@@ -6,11 +6,16 @@ use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\BookingController;
 
+// PUBLIC HOME PAGE
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+
 Route::get('/admin/properties', [PropertyController::class, 'index']);
 Route::get('/admin/dashboard', [DashboardController::class, 'index']);
 Route::get('/admin/properties/{id}', [PropertyController::class, 'show']);
 Route::post('/admin/properties/{id}/approve', [PropertyController::class, 'approve']);
 Route::post('/admin/properties/{id}/reject', [PropertyController::class, 'reject']);
+Route::post('/admin/properties/{id}/mark-featured', [PropertyController::class, 'markFeatured']);
+Route::post('/admin/properties/{id}/unmark-featured', [PropertyController::class, 'unmarkFeatured']);
 
 Route::get('/properties/{id}/book', [BookingController::class, 'create']);
 Route::post('/bookings', [BookingController::class, 'store']);

@@ -32,4 +32,20 @@ class PropertyController extends Controller
         $property->update(['approval_status' => 'rejected']);
          return back()->with('success', 'Property rejected successfully');
     }
+
+    public function markFeatured($id)
+{
+    $property = Property::findOrFail($id);
+    $property->is_featured = 1;
+    $property->save();
+    return back()->with('success', 'Property marked as featured');
+}
+
+public function unmarkFeatured($id)
+{
+    $property = Property::findOrFail($id);
+    $property->is_featured = 0;
+    $property->save();
+    return back()->with('success', 'Property removed from featured');
+}
 }

@@ -26,6 +26,8 @@
 
             <th>Approval</th>
 
+            <th>Featured</th>
+
             <th>Action</th>
 
         </tr>
@@ -57,6 +59,15 @@
         <span class="badge bg-danger">✗ Rejected</span>
     @else
         <span class="badge bg-warning text-dark">⏳ Pending</span>
+    @endif
+</td>
+
+
+<td>
+    @if($property->is_featured)
+        <span class="badge bg-warning">⭐ Featured</span>
+    @else
+        <span class="badge bg-secondary">Not Featured</span>
     @endif
 </td>
 
