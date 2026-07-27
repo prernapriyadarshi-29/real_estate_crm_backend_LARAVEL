@@ -53,5 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/properties/{id}/book', [App\Http\Controllers\BookingController::class, 'create']);
 Route::post('/bookings', [App\Http\Controllers\BookingController::class, 'store']);
 Route::get('/bookings/{id}', [App\Http\Controllers\BookingController::class, 'show']);
+Route::get('/bookings/{id}/payment', [App\Http\Controllers\BookingController::class, 'payment']);
+Route::post('/bookings/{id}/payment-success', [BookingController::class, 'paymentSuccess'])->middleware('auth');
     Route::get('/my-bookings', [App\Http\Controllers\BookingController::class, 'myBookings']);
 });

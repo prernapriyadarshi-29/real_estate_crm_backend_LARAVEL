@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Property;
 use Illuminate\Http\Request;
+use Razorpay\Api\Api;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -47,6 +49,34 @@ class BookingController extends Controller
 
         return view('bookings.show', compact('booking'));
     }
+
+    public function payment($id)
+{
+    $booking = Booking::with('property')->findOrFail($id);
+
+    if ($booking->user_id != auth()->id()) {
+        abort(403);
+    }
+
+    return view('bookings.payment', [
+        'booking' => $booking,
+        'razorpayKey' => env('RAZORPAY_KEY')
+    ]);
+}
+
+public function paymentSuccess(Request $request, $id)
+{
+    $booking = Booking::findOrFail($id);
+
+    $booking->update([
+        'payment_status' => 'completed',
+        'status' => 'confirmed',
+        'razorpay_payment_id' => $request->razorpay_payment_id,
+    ]);
+
+    return redirect("/bookings/$id")
+        ->with('success', 'Payment completed successfully.');
+}
 
     public function myBookings()
 {

@@ -62,11 +62,33 @@
                 </div>
             </div>
 
-            <div class="mt-4">
-                <a href="/my-bookings" class="btn btn-primary">View All Bookings</a>
-                <a href="/" class="btn btn-secondary">Back to Home</a>
-            </div>
-        </div>
+@if($booking->payment_status === 'pending')
+
+<div class="card mt-4">
+    <div class="card-body">
+
+        <h5>Payment</h5>
+
+        <p>
+            Pay your token amount to confirm this booking.
+        </p>
+
+        <a href="/bookings/{{ $booking->id }}/payment"
+           class="btn btn-success">
+
+            Pay ₹ {{ number_format($booking->token_amount) }}
+
+        </a>
+
+    </div>
+</div>
+
+@endif
+
+<div class="mt-4">
+    <a href="/my-bookings" class="btn btn-primary">View All Bookings</a>
+    <a href="/" class="btn btn-secondary">Back to Home</a>
+</div>
 
         <div class="col-md-4">
             <div class="alert alert-info">
