@@ -5,9 +5,12 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\PropertyController as PublicPropertyController;
 
 // PUBLIC HOME PAGE
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/properties/{id}', [App\Http\Controllers\HomeController::class, 'show'])
+    ->name('properties.show');
 
 Route::get('/admin/properties', [PropertyController::class, 'index']);
 Route::get('/admin/dashboard', [DashboardController::class, 'index']);
@@ -37,3 +40,18 @@ Route::get('/admin/bookings', [BookingController::class, 'index']);
 Route::get('/admin/bookings/{id}', [BookingController::class, 'show']);
 Route::post('/admin/bookings/{id}/approve', [BookingController::class, 'approve']);
 Route::post('/admin/bookings/{id}/cancel', [BookingController::class, 'cancel']);
+
+// AUTH ROUTES
+Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegisterForm']);
+Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm']);
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout']);
+
+// PUBLIC BOOKING ROUTES (Protected by auth)
+Route::middleware('auth')->group(function () {
+    Route::get('/properties/{id}/book', [App\Http\Controllers\BookingController::class, 'create']);
+Route::post('/bookings', [App\Http\Controllers\BookingController::class, 'store']);
+Route::get('/bookings/{id}', [App\Http\Controllers\BookingController::class, 'show']);
+    Route::get('/my-bookings', [App\Http\Controllers\BookingController::class, 'myBookings']);
+});

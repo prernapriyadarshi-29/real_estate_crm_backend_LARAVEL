@@ -37,12 +37,19 @@
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Ready to Book?</h5>
-                    <h3 class="text-primary mb-3">₹ {{ number_format($property->price) }}</h3>
-                    <a href="/properties/{{ $property->id }}/book" class="btn btn-success btn-lg w-100">
-                        Book Now
-                    </a>
-                </div>
+    <h5 class="card-title">Ready to Book?</h5>
+    <h3 class="text-primary mb-3">₹ {{ number_format($property->price) }}</h3>
+
+    @if(auth()->check())
+        <a href="/properties/{{ $property->id }}/book" class="btn btn-success btn-lg w-100">
+            📅 Book Now
+        </a>
+    @else
+        <a href="/login" class="btn btn-success btn-lg w-100">
+            Login to Book
+        </a>
+    @endif
+</div>
             </div>
         </div>
     </div>

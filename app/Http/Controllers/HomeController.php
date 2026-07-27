@@ -14,12 +14,19 @@ class HomeController extends Controller
                                       ->latest()
                                       ->take(6)
                                       ->get();
-        
+
         $allProperties = Property::where('approval_status', 'approved')
-                                ->latest()
-                                ->take(12)
-                                ->paginate(12);
+                                 ->latest()
+                                 ->paginate(12);
 
         return view('home', compact('featuredProperties', 'allProperties'));
+    }
+
+    public function show($id)
+    {
+        $property = Property::where('approval_status', 'approved')
+                            ->findOrFail($id);
+
+        return view('properties.show', compact('property'));
     }
 }

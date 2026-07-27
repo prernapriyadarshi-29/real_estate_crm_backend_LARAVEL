@@ -24,13 +24,45 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/properties">Properties</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
+                @auth
+                    <li class="nav-item">
+                        <span class="nav-link">Hi, {{ auth()->user()->name }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <form method="POST" action="/logout" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="nav-link btn btn-link">Logout</button>
+                        </form>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                @endauth
             </ul>
         </div>
     </div>
 </nav>
+
+<!-- SUCCESS/ERROR MESSAGES -->
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @foreach ($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    </div>
+@endif
 
 <!-- MAIN CONTENT -->
 <main>
