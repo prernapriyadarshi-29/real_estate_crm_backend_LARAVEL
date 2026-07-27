@@ -39,7 +39,7 @@ class BookingController extends Controller
 
     public function show($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with(['property', 'user'])->findOrFail($id);
         
         if ($booking->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
@@ -49,8 +49,12 @@ class BookingController extends Controller
     }
 
     public function myBookings()
-    {
-        $bookings = Booking::where('user_id', auth()->id())->latest()->get();
-        return view('bookings.my-bookings', compact('bookings'));
-    }
+{
+    $bookings = Booking::with('property')
+        ->where('user_id', auth()->id())
+        ->latest()
+        ->get();
+
+    return view('bookings.my-bookings', compact('bookings'));
+}
 }

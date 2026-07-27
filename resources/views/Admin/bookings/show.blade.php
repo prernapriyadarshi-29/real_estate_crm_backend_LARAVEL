@@ -1,75 +1,153 @@
 @extends('layouts.admin')
 
-@section('title','Booking Details')
+@section('title', 'Booking Details')
 
 @section('content')
 
 <h2 class="mb-4">Booking Details</h2>
 
-<div class="card">
+<div class="card shadow">
+
+    <div class="card-header">
+        <h4>Booking #{{ $booking->id }}</h4>
+    </div>
+
     <div class="card-body">
 
-        <p><strong>Booking ID:</strong> {{ $booking->id }}</p>
+        <table class="table table-bordered">
 
-        <p><strong>Property ID:</strong> {{ $booking->property_id }}</p>
+            <tr>
+                <th width="250">Customer</th>
+                <td>{{ $booking->user->name ?? 'N/A' }}</td>
+            </tr>
 
-        <p><strong>User ID:</strong> {{ $booking->user_id ?? 'N/A' }}</p>
+            <tr>
+                <th>Email</th>
+                <td>{{ $booking->user->email ?? 'N/A' }}</td>
+            </tr>
 
-        <p><strong>Token Amount:</strong> ₹ {{ number_format($booking->token_amount,2) }}</p>
+            <tr>
+                <th>Property</th>
+                <td>{{ $booking->property->title ?? 'N/A' }}</td>
+            </tr>
 
-        <p><strong>Payment Status:</strong> {{ ucfirst($booking->payment_status ?? 'pending') }}</p>
+            <tr>
+                <th>City</th>
+                <td>{{ $booking->property->city ?? 'N/A' }}</td>
+            </tr>
 
-        <p><strong>Status:</strong>
+            <tr>
+                <th>Property Price</th>
+                <td>₹ {{ number_format($booking->full_price) }}</td>
+            </tr>
 
-            @if($booking->status=='approved')
+            <tr>
+                <th>Token Amount</th>
+                <td>₹ {{ number_format($booking->token_amount) }}</td>
+            </tr>
 
-                <span class="badge bg-success">Approved</span>
+            <tr>
+                <th>Payment Status</th>
 
-            @elseif($booking->status=='cancelled')
+                <td>
 
-                <span class="badge bg-danger">Cancelled</span>
+                    @if($booking->payment_status=='completed')
 
-            @else
+                        <span class="badge bg-success">
+                            Paid
+                        </span>
 
-                <span class="badge bg-warning text-dark">Pending</span>
+                    @else
 
-            @endif
+                        <span class="badge bg-warning text-dark">
+                            Pending
+                        </span>
 
-        </p>
+                    @endif
+
+                </td>
+
+            </tr>
+
+            <tr>
+                <th>Booking Status</th>
+
+                <td>
+
+                    @if($booking->status=='confirmed')
+
+                        <span class="badge bg-success">
+                            Confirmed
+                        </span>
+
+                    @elseif($booking->status=='cancelled')
+
+                        <span class="badge bg-danger">
+                            Cancelled
+                        </span>
+
+                    @else
+
+                        <span class="badge bg-secondary">
+                            Pending
+                        </span>
+
+                    @endif
+
+                </td>
+
+            </tr>
+
+            <tr>
+                <th>Booked On</th>
+                <td>{{ $booking->created_at->format('d M Y, h:i A') }}</td>
+            </tr>
+
+        </table>
 
         <hr>
 
-        @if($booking->status!='approved')
+        @if($booking->status=='pending')
 
-        <form action="/admin/bookings/{{ $booking->id }}/approve" method="POST">
-            @csrf
-            <button class="btn btn-success">
-                Approve Booking
-            </button>
-        </form>
+            <form action="/admin/bookings/{{ $booking->id }}/approve"
+                  method="POST"
+                  class="d-inline">
 
-        <br>
+                @csrf
+
+                <button class="btn btn-success">
+
+                    Confirm Booking
+
+                </button>
+
+            </form>
+
+            <form action="/admin/bookings/{{ $booking->id }}/cancel"
+                  method="POST"
+                  class="d-inline">
+
+                @csrf
+
+                <button class="btn btn-danger">
+
+                    Cancel Booking
+
+                </button>
+
+            </form>
 
         @endif
 
-        @if($booking->status!='cancelled')
+        <a href="/admin/bookings"
+           class="btn btn-secondary">
 
-        <form action="/admin/bookings/{{ $booking->id }}/cancel" method="POST">
-            @csrf
-            <button class="btn btn-danger">
-                Cancel Booking
-            </button>
-        </form>
+            Back to Bookings
 
-        @endif
-
-        <br>
-
-        <a href="/admin/bookings" class="btn btn-secondary">
-            Back
         </a>
 
     </div>
+
 </div>
 
 @endsection
