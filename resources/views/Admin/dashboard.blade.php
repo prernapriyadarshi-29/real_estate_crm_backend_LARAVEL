@@ -58,4 +58,56 @@
     </div>
 </div>
 
+<div class="row mt-4">
+
+    <div class="col-md-4">
+
+        <div class="card text-bg-primary">
+
+            <div class="card-body">
+
+                <h5>Total Bookings</h5>
+
+                <h2>{{ $totalBookings }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-bg-success">
+
+            <div class="card-body">
+
+                <h5>Paid Bookings</h5>
+
+                <h2>{{ $completedPayments }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-bg-warning">
+
+            <div class="card-body">
+
+                <h5>Pending Payments</h5>
+
+                <h2>{{ $pendingPayments }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 @endsection

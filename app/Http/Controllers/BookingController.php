@@ -7,6 +7,7 @@ use App\Models\Property;
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
 use Illuminate\Support\Facades\DB;
+use Razorpay\Api\Errors\SignatureVerificationError;
 
 class BookingController extends Controller
 {
@@ -68,14 +69,45 @@ public function paymentSuccess(Request $request, $id)
 {
     $booking = Booking::findOrFail($id);
 
+    $api = new Api(
+        env('RAZORPAY_KEY'),
+        env('RAZORPAY_SECRET')
+    );
+
+    try {
+
+        $attributes = [
+
+            'razorpay_order_id' => $request->razorpay_order_id,
+
+            'razorpay_payment_id' => $request->razorpay_payment_id,
+
+            'razorpay_signature' => $request->razorpay_signature,
+
+        ];
+
+        $api->utility->verifyPaymentSignature($attributes);
+
+    } catch (SignatureVerificationError $e) {
+
+        return redirect("/bookings/$id")
+            ->with('error', 'Payment verification failed.');
+
+    }
+
     $booking->update([
+
         'payment_status' => 'completed',
+
         'status' => 'confirmed',
+
         'razorpay_payment_id' => $request->razorpay_payment_id,
+
     ]);
 
     return redirect("/bookings/$id")
-        ->with('success', 'Payment completed successfully.');
+        ->with('success', 'Payment Successful.');
+
 }
 
     public function myBookings()

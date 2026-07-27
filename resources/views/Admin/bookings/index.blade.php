@@ -27,7 +27,23 @@
             <td>{{ $booking->property_id }}</td>
             <td>{{ $booking->user_id ?? 'N/A' }}</td>
             <td>₹ {{ number_format($booking->token_amount,2) }}</td>
-            <td>{{ ucfirst($booking->payment_status ?? 'pending') }}</td>
+            <td>
+
+    @if($booking->payment_status=='completed')
+
+        <span class="badge bg-success">
+            Paid
+        </span>
+
+    @else
+
+        <span class="badge bg-warning text-dark">
+            Pending
+        </span>
+
+    @endif
+
+</td>
             <td>
                 @if($booking->status=='approved')
                     <span class="badge bg-success">Approved</span>

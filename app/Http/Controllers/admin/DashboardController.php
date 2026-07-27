@@ -16,10 +16,28 @@ class DashboardController extends Controller
         
         $totalCustomers = \App\Models\Customer::count();
 
-        return view('Admin.dashboard', compact(
-            'totalProperties',
-            'totalAgents',
-            'totalCustomers'
-        ));
+        $totalBookings = \App\Models\Booking::count();
+
+$completedPayments = \App\Models\Booking::where(
+    'payment_status',
+    'completed'
+)->count();
+
+$pendingPayments = \App\Models\Booking::where(
+    'payment_status',
+    'pending'
+)->count();
+
+        return view(
+    'Admin.dashboard',
+    compact(
+        'totalProperties',
+        'totalAgents',
+        'totalCustomers',
+        'totalBookings',
+        'completedPayments',
+        'pendingPayments'
+    )
+);
     }
 }
